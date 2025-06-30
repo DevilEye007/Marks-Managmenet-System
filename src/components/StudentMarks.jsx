@@ -1,15 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
-import logo from '../assets/image/logo.png'; // path to the logo image
+import logo from "../assets/image/logo.png"; // path to the logo image
 
 const StudentMarks = () => {
   const [students, setStudents] = useState([]);
   const [studentCode, setStudentCode] = useState("");
   const [marks, setMarks] = useState("");
   const [section, setSection] = useState("B");
+  const [visitCount, setVisitCount] = useState(0);
 
   const nextRollNumber = "23011556-";
+
+  // Track unique visits using localStorage
+  useEffect(() => {
+    const visited = localStorage.getItem("visited");
+    let totalVisits = localStorage.getItem("totalVisits");
+
+    if (!visited) {
+      localStorage.setItem("visited", "true");
+      totalVisits = totalVisits ? parseInt(totalVisits) + 1 : 1;
+      localStorage.setItem("totalVisits", totalVisits);
+    }
+
+    setVisitCount(totalVisits || 1);
+  }, []);
 
   const handleAddStudent = () => {
     if (marks && studentCode.length === 3) {
@@ -52,9 +67,13 @@ const StudentMarks = () => {
             <img src={logo} alt="University of Gujrat Logo" className="h-20 w-auto" />
           </div>
 
-          <h2 className="text-3xl font-bold text-center mb-6 text-indigo-700">
+          <h2 className="text-3xl font-bold text-center mb-2 text-indigo-700">
             📋 Student Marks Entry
           </h2>
+
+          <p className="text-center text-sm text-gray-500 mb-6">
+            👀 Total Visitors (unique browsers): <strong>{visitCount}</strong>
+          </p>
 
           {/* Base Roll Number */}
           <div className="mb-4">
